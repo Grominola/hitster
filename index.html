@@ -3,70 +3,140 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mini HITSTER</title>
+  <title>HITSTER VALIRA</title>
 
-  <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json">
 
   <style>
-    body { font-family: Arial, sans-serif; text-align:center; margin-top:50px; }
-    h1 { color:#1DB954; }
-    button { padding:12px 20px; font-size:18px; border:none; border-radius:6px; cursor:pointer; margin-top:20px; }
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      background: #000; /* fondo negro para partículas */
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: url('fondo.jpg') no-repeat center center fixed;
+      background-size: cover;
+      z-index: 0;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      text-align: center;
+      color: white;
+    }
+
+    h1 {
+      font-size: 50px;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+      margin-bottom: 50px;
+    }
+
+    button {
+      padding: 25px 50px;
+      font-size: 24px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      background: #1DB954;
+      color: white;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
   </style>
 </head>
 <body>
-  <h1>Mini HITSTER</h1>
-  <p>Si no se abre automáticamente, pulsa el botón:</p>
-  <button id="openBtn">Abrir en Spotify</button>
+  <div id="particles-js"></div>
+
+  <div class="overlay">
+    <h1>HITSTER VALIRA</h1>
+    <button id="openBtn">Abrir en Spotify</button>
+  </div>
+
+  <!-- Librería Particles.js -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
   <script>
+    // Configuración de partículas
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": "#ffffff" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5, "random": true },
+        "size": { "value": 3, "random": true },
+        "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.4, "width": 1 },
+        "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "bounce": false }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+        "modes": { "repulse": { "distance": 100 }, "push": { "particles_nb": 4 } }
+      },
+      "retina_detect": true
+    });
+
     // Array de canciones
     const canciones = [
-      { nombre: "Layla – Eric Clapton", id: "0g4kJXE7uV4PkFUWw4wLe8" },
-      { nombre: "Popotitos – Miguel Ríos", id: "2PH9GFf0zwLitcYQumD40h" },
-      { nombre: "Marieta – Javier Krahe", id: "1VG10Ln2yYle29nObxykNJ" },
-      { nombre: "Gloria – Umberto Tozzi", id: "35tzxthMBglBMjmZ7Fn1hj" },
-      { nombre: "Cuba Libre – Gloria Estefan", id: "62QsBMaSgNxSb9HBMyjCfy" },
-      { nombre: "Susie Q – Creedence Clearwater Revival", id: "6z2AyfE9GZxoHqJVSA4NgN" },
-      { nombre: "Roxanne – The Police", id: "3EYOJ48Et32uATr9ZmLnAo" },
-      { nombre: "Un ramito de violetas – Cecilia", id: "3lpF8AbTteK4bXXZMhm31n" },
-      { nombre: "Melina – Camilo Sesto", id: "3utK0tH0YhlB5fIjdy3em7" },
-      { nombre: "Mariquilla – José Luis", id: "1DOo8mHehqqe0KYWEE3efS" },
-      { nombre: "Libertad sin ira – Jarcha", id: "63ZPDjygXPMtqmpcoJUVk5" },
-      { nombre: "La mala reputación – Paco Ibáñez", id: "3j8knEcyYVQrHXGUGo01lE" },
-      { nombre: "Mediterráneo – Joan Manuel Serrat", id: "7Bewui7KtaMzROeteRitRz" },
-      { nombre: "Cecilia – Simon & Garfunkel", id: "6QhXQOpyYvbpdbyjgAqKdY" },
-      { nombre: "Romeo and Juliet – Dire Straits", id: "0PNt5WTw092eED0ru9SuIp" },
-      { nombre: "The House of the Rising Sun – The Animals", id: "4mn2kNTqiGLwaUR8JdhJ1l" }
+      "5vIztZmTRcwnprJRZ1rYvo",
+      "2PH9GFf0zwLitcYQumD40h",
+      "1VG10Ln2yYle29nObxykNJ",
+      "35tzxthMBglBMjmZ7Fn1hj",
+      "62QsBMaSgNxSb9HBMyjCfy",
+      "6z2AyfE9GZxoHqJVSA4NgN",
+      "3EYOJ48Et32uATr9ZmLnAo",
+      "3lpF8AbTteK4bXXZMhm31n",
+      "3utK0tH0YhlB5fIjdy3em7",
+      "1DOo8mHehqqe0KYWEE3efS",
+      "63ZPDjygXPMtqmpcoJUVk5",
+      "3j8knEcyYVQrHXGUGo01lE",
+      "7Bewui7KtaMzROeteRitRz",
+      "6QhXQOpyYvbpdbyjgAqKdY",
+      "0PNt5WTw092eED0ru9SuIp",
+      "4mn2kNTqiGLwaUR8JdhJ1l"
     ];
 
-    // Detectar parámetro del QR
+    // Selección aleatoria de canción si no hay parámetro
     const params = new URLSearchParams(window.location.search);
-    const cancionParam = params.get("cancion");
-    const index = parseInt(cancionParam) - 1;
-    const seleccion = canciones[index] || canciones[0];
+    let index = parseInt(params.get("cancion")) - 1;
+    if (isNaN(index) || index < 0 || index >= canciones.length) {
+      // Si no hay parámetro, selecciona aleatoria
+      index = Math.floor(Math.random() * canciones.length);
+    }
+    const seleccion = canciones[index];
 
-    const deepLink = `spotify:track:${seleccion.id}`;
-    const webLink = `https://open.spotify.com/track/${seleccion.id}`;
+    const deepLink = `spotify:track:${seleccion}`;
+    const webLink = `https://open.spotify.com/track/${seleccion}`;
 
     function openSpotify() {
-      // Intentar abrir app de Spotify
       const iframe = document.createElement("iframe");
       iframe.style.display = "none";
       iframe.src = deepLink;
       document.body.appendChild(iframe);
 
-      // Si no abre, ir a web
       setTimeout(() => { window.location.href = webLink; }, 1000);
     }
 
-    // Abrir automáticamente al cargar
+    // Abrir automáticamente
     openSpotify();
-
-    // Botón manual
     document.getElementById("openBtn").addEventListener("click", openSpotify);
 
-    // Registrar Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(() => console.log('Service Worker registrado'));
