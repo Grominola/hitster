@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HITSTER VALIRA</title>
-
   <link rel="manifest" href="manifest.json">
 
   <style>
@@ -15,7 +14,7 @@
       width: 100%;
       font-family: Arial, sans-serif;
       overflow: hidden;
-      background: #000; /* fondo negro para partículas */
+      background: #000;
     }
 
     #particles-js {
@@ -69,11 +68,11 @@
     <button id="openBtn">Abrir en Spotify</button>
   </div>
 
-  <!-- Librería Particles.js -->
+  <!-- Particles.js -->
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
   <script>
-    // Configuración de partículas
+    // Partículas
     particlesJS("particles-js", {
       "particles": {
         "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
@@ -92,32 +91,21 @@
       "retina_detect": true
     });
 
-    // Array de canciones
+    // Array de canciones (IDs)
     const canciones = [
-      "5vIztZmTRcwnprJRZ1rYvo",
-      "2PH9GFf0zwLitcYQumD40h",
-      "1VG10Ln2yYle29nObxykNJ",
-      "35tzxthMBglBMjmZ7Fn1hj",
-      "62QsBMaSgNxSb9HBMyjCfy",
-      "6z2AyfE9GZxoHqJVSA4NgN",
-      "3EYOJ48Et32uATr9ZmLnAo",
-      "3lpF8AbTteK4bXXZMhm31n",
-      "3utK0tH0YhlB5fIjdy3em7",
-      "1DOo8mHehqqe0KYWEE3efS",
-      "63ZPDjygXPMtqmpcoJUVk5",
-      "3j8knEcyYVQrHXGUGo01lE",
-      "7Bewui7KtaMzROeteRitRz",
-      "6QhXQOpyYvbpdbyjgAqKdY",
-      "0PNt5WTw092eED0ru9SuIp",
+      "5vIztZmTRcwnprJRZ1rYvo","2PH9GFf0zwLitcYQumD40h","1VG10Ln2yYle29nObxykNJ",
+      "35tzxthMBglBMjmZ7Fn1hj","62QsBMaSgNxSb9HBMyjCfy","6z2AyfE9GZxoHqJVSA4NgN",
+      "3EYOJ48Et32uATr9ZmLnAo","3lpF8AbTteK4bXXZMhm31n","3utK0tH0YhlB5fIjdy3em7",
+      "1DOo8mHehqqe0KYWEE3efS","63ZPDjygXPMtqmpcoJUVk5","3j8knEcyYVQrHXGUGo01lE",
+      "7Bewui7KtaMzROeteRitRz","6QhXQOpyYvbpdbyjgAqKdY","0PNt5WTw092eED0ru9SuIp",
       "4mn2kNTqiGLwaUR8JdhJ1l"
     ];
 
-    // Selección aleatoria de canción si no hay parámetro
+    // Detectar parámetro QR
     const params = new URLSearchParams(window.location.search);
     let index = parseInt(params.get("cancion")) - 1;
     if (isNaN(index) || index < 0 || index >= canciones.length) {
-      // Si no hay parámetro, selecciona aleatoria
-      index = Math.floor(Math.random() * canciones.length);
+      index = Math.floor(Math.random() * canciones.length); // canción aleatoria si no hay parámetro
     }
     const seleccion = canciones[index];
 
@@ -137,6 +125,7 @@
     openSpotify();
     document.getElementById("openBtn").addEventListener("click", openSpotify);
 
+    // Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(() => console.log('Service Worker registrado'));
@@ -144,3 +133,4 @@
   </script>
 </body>
 </html>
+
