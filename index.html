@@ -113,37 +113,74 @@
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
-    const btn = document.getElementById("btnScan");
+const btn = document.getElementById("btnScan");
 
-    btn.onclick = () => {
-        const qrBox = document.createElement("div");
-        qrBox.style.position = "fixed";
-        qrBox.style.top = "0";
-        qrBox.style.left = "0";
-        qrBox.style.width = "100%";
-        qrBox.style.height = "100%";
-        qrBox.style.background = "rgba(0,0,0,0.8)";
-        qrBox.style.display = "flex";
-        qrBox.style.justifyContent = "center";
-        qrBox.style.alignItems = "center";
-        qrBox.style.zIndex = "9999";
+btn.onclick = () => {
 
-        document.body.appendChild(qrBox);
+    // Crea el fondo oscuro
+    const qrBox = document.createElement("div");
+    qrBox.style.position = "fixed";
+    qrBox.style.top = "0";
+    qrBox.style.left = "0";
+    qrBox.style.width = "100%";
+    qrBox.style.height = "100%";
+    qrBox.style.background = "rgba(0,0,0,0.85)";
+    qrBox.style.display = "flex";
+    qrBox.style.justifyContent = "center";
+    qrBox.style.alignItems = "center";
+    qrBox.style.zIndex = "9999";
 
-        const qrScanner = new Html5Qrcode("reader");
+    // Inserta el contenedor del reader
+    qrBox.innerHTML = `
+        <div id="reader" style="width: 300px; height: 300px;"></div>
+        <button id="cerrarQR" style="
+            margin-top:20px;
+            padding:10px 20px;
+            font-size:1.1rem;
+            border:none;
+            border-radius:10px;
+            background:red;
+            color:white;
+            cursor:pointer;
+            position:absolute;
+            bottom:40px;
+        ">Cerrar</button>
+    `;
 
-        qrBox.innerHTML = `<div id="reader" style="width: 300px; height: 300px;"></div>`;
+    document.body.appendChild(qrBox);
 
-        qrScanner.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: 250 },
-            qrCodeMessage => {
-                window.location.href = "https://open.spotify.com/track/" + qrCodeMessage;
-            },
-            error => { }
-        );
-    };
+    const qrScanner = new Html5Qrcode("reader");
+
+    qrScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+
+        // CUANDO LEE EL QR
+        qrCodeMessage => {
+
+            // Detener escaneo
+            qrScanner.stop().then(() => {
+
+                // Interpretar si es link completo o sólo un ID
+                if (qrCodeMessage.startsWith("http")) {
+                    window.location.href = qrCodeMessage;
+                } else {
+                    window.location.href = "https://open.spotify.com/track/" + qrCodeMessage;
+                }
+
+            });
+
+        },
+        error => {}
+    );
+
+    // Botón para cerrar el lector
+    document.getElementById("cerrarQR").onclick = () => {
+        qrScanner.stop().then(() => {
+            qrBox.remove();
+        });
+    };
+};
 </script>
-
 </body>
 </html>
