@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Mini HITSTER</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { text-align:center; font-family:Arial,sans-serif; margin-top:50px; }
+    button { padding:12px 20px; font-size:18px; border:none; border-radius:6px; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <h1>Mini HITSTER</h1>
+  <p>Si no se abre automáticamente, pulsa el botón</p>
+  <button id="openBtn">Abrir en Spotify</button>
+
+  <script>
+    // Lista de canciones
+    const canciones = [
+      { nombre: "Canción 1", id: "TRACK_ID_1" },
+      { nombre: "Canción 2", id: "TRACK_ID_2" },
+      { nombre: "Canción 3", id: "TRACK_ID_3" }
+    ];
+
+    // Leer parámetro de URL
+    const params = new URLSearchParams(window.location.search);
+    const cancionParam = params.get("cancion"); // ?cancion=1
+
+    // Elegir la canción según el parámetro
+    const index = parseInt(cancionParam) - 1; // restar 1 para índice
+    const seleccion = canciones[index] || canciones[0]; // fallback a la primera
+
+    const deepLink = `spotify:track:${seleccion.id}`;
+    const webLink = `https://open.spotify.com/track/${seleccion.id}`;
+
+    function openApp() {
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.src = deepLink;
+      document.body.appendChild(iframe);
+
+      setTimeout(() => { window.location.href = webLink; }, 1000);
+    }
+
+    openApp();
+
+    document.getElementById("openBtn").addEventListener("click", () => {
+      window.location.href = webLink;
+    });
+  </script>
+</body>
+</html>
