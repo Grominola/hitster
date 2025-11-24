@@ -17,6 +17,7 @@
       background: #000;
     }
 
+    /* Fondo con overlay */
     #particles-js {
       position: absolute;
       width: 100%;
@@ -26,7 +27,19 @@
       z-index: 0;
     }
 
-    .overlay {
+    /* Overlay oscuro para resaltar elementos */
+    #overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 0;
+    }
+
+    /* Contenido centrado */
+    .overlay-content {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -62,8 +75,9 @@
 </head>
 <body>
   <div id="particles-js"></div>
+  <div id="overlay"></div>
 
-  <div class="overlay">
+  <div class="overlay-content">
     <h1>HITSTER VALIRA</h1>
     <button id="openBtn">Abrir en Spotify</button>
   </div>
@@ -72,7 +86,7 @@
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
   <script>
-    // Partículas
+    // Configuración de partículas
     particlesJS("particles-js", {
       "particles": {
         "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
@@ -101,18 +115,19 @@
       "4mn2kNTqiGLwaUR8JdhJ1l"
     ];
 
-    // Detectar parámetro QR
     const params = new URLSearchParams(window.location.search);
-    let index = parseInt(params.get("cancion")) - 1;
-    if (isNaN(index) || index < 0 || index >= canciones.length) {
-      index = Math.floor(Math.random() * canciones.length); // canción aleatoria si no hay parámetro
-    }
-    const seleccion = canciones[index];
+    const cancionParam = params.get("cancion");
+    let index = parseInt(cancionParam) - 1;
 
-    const deepLink = `spotify:track:${seleccion}`;
-    const webLink = `https://open.spotify.com/track/${seleccion}`;
+    const valid = !isNaN(index) && index >=0 && index < canciones.length;
+
+    const seleccion = valid ? canciones[index] : null;
+
+    const deepLink = seleccion ? `spotify:track:${seleccion}` : null;
+    const webLink = seleccion ? `https://open.spotify.com/track/${seleccion}` : null;
 
     function openSpotify() {
+      if (!seleccion) return; // si no hay canción válida, no hacer nada
       const iframe = document.createElement("iframe");
       iframe.style.display = "none";
       iframe.src = deepLink;
@@ -121,11 +136,10 @@
       setTimeout(() => { window.location.href = webLink; }, 1000);
     }
 
-    // Abrir automáticamente
-    openSpotify();
+    // Abrir solo si hay QR válido
+    if (seleccion) openSpotify();
     document.getElementById("openBtn").addEventListener("click", openSpotify);
 
-    // Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(() => console.log('Service Worker registrado'));
@@ -133,4 +147,3 @@
   </script>
 </body>
 </html>
-
