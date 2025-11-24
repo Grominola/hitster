@@ -1,53 +1,76 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <link rel="manifest" href="manifest.json">
   <meta charset="utf-8">
-  <title>Mini HITSTER</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mini HITSTER</title>
+
+  <!-- Manifest PWA -->
+  <link rel="manifest" href="manifest.json">
+
   <style>
-    body { text-align:center; font-family:Arial,sans-serif; margin-top:50px; }
-    button { padding:12px 20px; font-size:18px; border:none; border-radius:6px; cursor:pointer; }
+    body { font-family: Arial, sans-serif; text-align:center; margin-top:50px; }
+    h1 { color:#1DB954; }
+    button { padding:12px 20px; font-size:18px; border:none; border-radius:6px; cursor:pointer; margin-top:20px; }
   </style>
 </head>
 <body>
   <h1>Mini HITSTER</h1>
-  <p>Si no se abre automáticamente, pulsa el botón</p>
+  <p>Si no se abre automáticamente, pulsa el botón:</p>
   <button id="openBtn">Abrir en Spotify</button>
 
   <script>
-    // Lista de canciones
+    // Array de canciones
     const canciones = [
-      { nombre: "Canción 1", id: "TRACK_ID_1" },
-      { nombre: "Canción 2", id: "TRACK_ID_2" },
-      { nombre: "Canción 3", id: "TRACK_ID_3" }
+      { nombre: "Layla – Eric Clapton", id: "5vIztZmTRcwnprJRZ1rYvo" },
+      { nombre: "Popotitos – Miguel Ríos", id: "2PH9GFf0zwLitcYQumD40h" },
+      { nombre: "Marieta – Javier Krahe", id: "1VG10Ln2yYle29nObxykNJ" },
+      { nombre: "Gloria – Umberto Tozzi", id: "35tzxthMBglBMjmZ7Fn1hj" },
+      { nombre: "Cuba Libre – Gloria Estefan", id: "62QsBMaSgNxSb9HBMyjCfy" },
+      { nombre: "Susie Q – Creedence Clearwater Revival", id: "6z2AyfE9GZxoHqJVSA4NgN" },
+      { nombre: "Roxanne – The Police", id: "3EYOJ48Et32uATr9ZmLnAo" },
+      { nombre: "Un ramito de violetas – Cecilia", id: "3lpF8AbTteK4bXXZMhm31n" },
+      { nombre: "Melina – Camilo Sesto", id: "3utK0tH0YhlB5fIjdy3em7" },
+      { nombre: "Mariquilla – José Luis", id: "1DOo8mHehqqe0KYWEE3efS" },
+      { nombre: "Libertad sin ira – Jarcha", id: "63ZPDjygXPMtqmpcoJUVk5" },
+      { nombre: "La mala reputación – Paco Ibáñez", id: "3j8knEcyYVQrHXGUGo01lE" },
+      { nombre: "Mediterráneo – Joan Manuel Serrat", id: "7Bewui7KtaMzROeteRitRz" },
+      { nombre: "Cecilia – Simon & Garfunkel", id: "6QhXQOpyYvbpdbyjgAqKdY" },
+      { nombre: "Romeo and Juliet – Dire Straits", id: "0PNt5WTw092eED0ru9SuIp" },
+      { nombre: "The House of the Rising Sun – The Animals", id: "4mn2kNTqiGLwaUR8JdhJ1l" }
     ];
 
-    // Leer parámetro de URL
+    // Detectar parámetro del QR
     const params = new URLSearchParams(window.location.search);
-    const cancionParam = params.get("cancion"); // ?cancion=1
-
-    // Elegir la canción según el parámetro
-    const index = parseInt(cancionParam) - 1; // restar 1 para índice
-    const seleccion = canciones[index] || canciones[0]; // fallback a la primera
+    const cancionParam = params.get("cancion");
+    const index = parseInt(cancionParam) - 1;
+    const seleccion = canciones[index] || canciones[0];
 
     const deepLink = `spotify:track:${seleccion.id}`;
     const webLink = `https://open.spotify.com/track/${seleccion.id}`;
 
-    function openApp() {
+    function openSpotify() {
+      // Intentar abrir app de Spotify
       const iframe = document.createElement("iframe");
       iframe.style.display = "none";
       iframe.src = deepLink;
       document.body.appendChild(iframe);
 
+      // Si no abre, ir a web
       setTimeout(() => { window.location.href = webLink; }, 1000);
     }
 
-    openApp();
+    // Abrir automáticamente al cargar
+    openSpotify();
 
-    document.getElementById("openBtn").addEventListener("click", () => {
-      window.location.href = webLink;
-    });
+    // Botón manual
+    document.getElementById("openBtn").addEventListener("click", openSpotify);
+
+    // Registrar Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker registrado'));
+    }
   </script>
 </body>
 </html>
