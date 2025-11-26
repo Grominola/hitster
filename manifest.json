@@ -9,12 +9,12 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/hitster/icon-192.png",
+      "src": "/hitster/icon192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/hitster/icon-512.png",
+      "src": "/hitster/icon512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
