@@ -1,19 +1,19 @@
 const CACHE_NAME = 'hitster-cache-v1';
+const BASE = '/hitster/';
+
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/fondo.png',
-  '/manifest.json',
-  '/icon192.png',
-  '/icon512.png'
+  BASE,
+  BASE + 'index.html',
+  BASE + 'fondo.png',
+  BASE + 'manifest.json',
+  BASE + 'icon192.png',
+  BASE + 'icon512.png'
 ];
 
 // Instalación
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
@@ -21,9 +21,11 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(key => {
-        if (key !== CACHE_NAME) return caches.delete(key);
-      }))
+      Promise.all(
+        keys.map(key => {
+          if (key !== CACHE_NAME) return caches.delete(key);
+        })
+      )
     )
   );
 });
