@@ -4,7 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Hitster Valira</title>
-
 <style>
     body {
         margin: 0;
@@ -15,19 +14,16 @@
         justify-content: center;
         align-items: center;
         text-align: center;
-
-        /* FONDO OPCIÓN B – que LLENE la pantalla y se recorte si hace falta */
         background-image: url("fondo.png");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-
         font-family: Arial, sans-serif;
         color: white;
     }
-#mainContent {
+    #mainContent {
         position: absolute;
-        top: 18%; /* Ajusta este número para más o menos altura */
+        top: 18%;
         left: 50%;
         transform: translateX(-50%);
     }
@@ -35,7 +31,6 @@
         font-size: 3rem;
         text-shadow: 2px 2px 10px black;
     }
-
     button {
         margin-top: 20px;
         padding: 22px 40px;
@@ -48,12 +43,9 @@
         transition: 0.2s;
         box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
-
     button:hover {
         transform: scale(1.1);
     }
-
-    /* CANVAS para partículas */
     #particles {
         position: fixed;
         top: 0;
@@ -65,7 +57,6 @@
     }
 </style>
 </head>
-
 <body>
 
 <canvas id="particles"></canvas>
@@ -75,54 +66,47 @@
     <button id="btnScan">Escanear QR</button>
 </div>
 
-<!-- Script para partículas -->
+<!-- Partículas -->
 <script>
-    const canvas = document.getElementById("particles");
-    const ctx = canvas.getContext("2d");
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
 
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+const particles = [];
+for (let i = 0; i < 80; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 3 + 1,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5
+    });
+}
 
-    const particles = [];
-
-    for (let i = 0; i < 80; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            r: Math.random() * 3 + 1,
-            dx: (Math.random() - 0.5) * 0.5,
-            dy: (Math.random() - 0.5) * 0.5
-        });
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = "rgba(255,255,255,0.7)";
-            ctx.fill();
-            p.x += p.dx;
-            p.y += p.dy;
-
-            if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-            if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-        });
-        requestAnimationFrame(animate);
-    }
-
-    animate();
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,0.7)";
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+    });
+    requestAnimationFrame(animate);
+}
+animate();
 </script>
 
-<!-- Script para lector QR -->
+<!-- Lector QR -->
 <script src="https://unpkg.com/html5-qrcode"></script>
-
 <script>
 const btn = document.getElementById("btnScan");
 
 btn.onclick = () => {
-
-    // Crea el fondo oscuro
     const qrBox = document.createElement("div");
     qrBox.style.position = "fixed";
     qrBox.style.top = "0";
@@ -131,70 +115,79 @@ btn.onclick = () => {
     qrBox.style.height = "100%";
     qrBox.style.background = "rgba(0,0,0,0.85)";
     qrBox.style.display = "flex";
+    qrBox.style.flexDirection = "column";
     qrBox.style.justifyContent = "center";
     qrBox.style.alignItems = "center";
     qrBox.style.zIndex = "9999";
 
-    // Inserta el contenedor del reader
-    qrBox.innerHTML = `
-        <div id="reader" style="width: 300px; height: 300px;"></div>
-        <button id="cerrarQR" style="
-            margin-top:20px;
-            padding:10px 20px;
-            font-size:1.1rem;
-            border:none;
-            border-radius:10px;
-            background:red;
-            color:white;
-            cursor:pointer;
-            position:absolute;
-            bottom:40px;
-        ">Cerrar</button>
-    `;
+    const readerDiv = document.createElement("div");
+    readerDiv.id = "reader";
+    readerDiv.style.width = "300px";
+    readerDiv.style.height = "300px";
+    qrBox.appendChild(readerDiv);
+
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "Cerrar";
+    closeBtn.style.marginTop = "20px";
+    closeBtn.style.padding = "10px 20px";
+    closeBtn.style.fontSize = "1.1rem";
+    closeBtn.style.border = "none";
+    closeBtn.style.borderRadius = "10px";
+    closeBtn.style.background = "red";
+    closeBtn.style.color = "white";
+    closeBtn.style.cursor = "pointer";
+    qrBox.appendChild(closeBtn);
 
     document.body.appendChild(qrBox);
 
     const qrScanner = new Html5Qrcode("reader");
 
-    qrScanner.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
+    // Intentar cámara trasera, fallback a predeterminada si no funciona
+    const config = { fps: 10, qrbox: 250 };
+    const constraints = { facingMode: { exact: "environment" } };
 
-        // CUANDO LEE EL QR
+    qrScanner.start(constraints, config,
         qrCodeMessage => {
-
-            // Detener escaneo
             qrScanner.stop().then(() => {
-
-            
-                // Interpretar si es link completo o solo un ID
-if (qrCodeMessage.startsWith("http")) {
-    window.location.href = qrCodeMessage;
-} else {
-    // ABRIR APP NATIVA DE SPOTIFY
-    window.location.href = "spotify://track/" + qrCodeMessage;
-
-    // FALLBACK WEB (si el deep link falla)
-    setTimeout(() => {
-        window.location.href = "https://open.spotify.com/track/" + qrCodeMessage;
-    }, 800);
-}
-
-
+                if (qrCodeMessage.startsWith("http")) {
+                    window.location.href = qrCodeMessage;
+                } else {
+                    window.location.href = "spotify://track/" + qrCodeMessage;
+                    setTimeout(() => {
+                        window.location.href = "https://open.spotify.com/track/" + qrCodeMessage;
+                    }, 800);
                 }
-
+                qrBox.remove();
             });
-
         },
-        error => {}
-    );
-
-    // Botón para cerrar el lector
-    document.getElementById("cerrarQR").onclick = () => {
-        qrScanner.stop().then(() => {
+        errorMessage => {}
+    ).catch(err => {
+        // Si exact: "environment" falla, usar fallback
+        qrScanner.start({ facingMode: "user" }, config,
+            qrCodeMessage => {
+                qrScanner.stop().then(() => {
+                    if (qrCodeMessage.startsWith("http")) {
+                        window.location.href = qrCodeMessage;
+                    } else {
+                        window.location.href = "spotify://track/" + qrCodeMessage;
+                        setTimeout(() => {
+                            window.location.href = "https://open.spotify.com/track/" + qrCodeMessage;
+                        }, 800);
+                    }
+                    qrBox.remove();
+                });
+            },
+            errorMessage => {}
+        ).catch(err2 => {
+            alert("No se pudo acceder a la cámara. Revisa permisos o usa HTTPS/localhost.");
             qrBox.remove();
+            console.error(err2);
         });
-    };
+    });
+
+    closeBtn.onclick = () => {
+        qrScanner.stop().then(() => qrBox.remove()).catch(() => qrBox.remove());
+    };
 };
 </script>
 </body>
