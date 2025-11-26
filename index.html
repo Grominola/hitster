@@ -151,37 +151,28 @@ btn.onclick = () => {
     const qrScanner = new Html5Qrcode("reader");
     const config = { fps: 10, qrbox: { width: 300, height: 300 } };
 
-    function openSpotifyTrack(trackId) {
-        const appLink = "spotify://track/" + trackId;
-        const webLink = "https://open.spotify.com/track/" + trackId;
-        const now = Date.now();
-        const iframe = document.createElement("iframe");
-        iframe.style.display = "none";
-        iframe.src = appLink;
-        document.body.appendChild(iframe);
-
-        setTimeout(() => {
-            if (Date.now() - now < 1600) {
-                window.location.href = webLink;
-            }
-            document.body.removeChild(iframe);
-        }, 1500);
-    }
-
     function handleQrMessage(qrCodeMessage) {
         qrScanner.stop().then(() => {
-            if (!qrCodeMessage.startsWith("http")) {
-                openSpotifyTrack(qrCodeMessage);
-            } else {
+            // Interpretar si es link completo o solo un ID
+            if (qrCodeMessage.startsWith("http")) {
                 window.location.href = qrCodeMessage;
+            } else {
+                // ABRIR APP NATIVA DE SPOTIFY
+                window.location.href = "spotify://track/" + qrCodeMessage;
+
+                // FALLBACK WEB (si el deep link falla)
+                setTimeout(() => {
+                    window.location.href = "https://open.spotify.com/track/" + qrCodeMessage;
+                }, 800);
             }
-            // No mostrar el contenido del QR, desaparece inmediatamente
+            // No mostrar la ID, cerrar el lector
             qrBox.remove();
         });
     }
 
     qrScanner.start({ facingMode: { exact: "environment" } }, config, handleQrMessage, errorMessage => {})
     .catch(err => {
+        // fallback a cámara frontal
         qrScanner.start({ facingMode: "user" }, config, handleQrMessage, errorMessage => {})
         .catch(err2 => {
             alert("No se pudo acceder a la cámara. Revisa permisos o usa HTTPS/localhost.");
