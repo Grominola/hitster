@@ -67,9 +67,6 @@ button:hover {
     <button id="btnScan">Escanear QR</button>
 </div>
 
-<!-- Botón de instalación PWA -->
-<button id="installBtn" style="display:none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 15px 30px; font-size: 1.2rem; background-color: #1db954; color: white; border: none; border-radius: 40px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10000;">Instalar App</button>
-
 <!-- Partículas -->
 <script>
 const canvas = document.getElementById("particles");
@@ -104,7 +101,6 @@ function animate() {
 }
 animate();
 </script>
-<button id="installBtn" style="display:none;">Instalar App</button>
 
 <!-- Lector QR -->
 <script src="https://unpkg.com/html5-qrcode"></script>
@@ -190,27 +186,7 @@ btn.onclick = () => {
         qrScanner.stop().then(() => qrBox.remove()).catch(() => qrBox.remove());
     };
 };
- 
-<script>
-let deferredPrompt;
-const installBtn = document.getElementById('installBtn');
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault(); // evita que Chrome muestre el prompt automáticamente
-    deferredPrompt = e;
-    installBtn.style.display = 'block';
-});
-
-installBtn.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt(); // muestra el prompt de instalación
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`User response: ${outcome}`);
-    deferredPrompt = null;
-    installBtn.style.display = 'none';
-});
 </script>
-
 </body>
 <script>
 if ('serviceWorker' in navigator) {
