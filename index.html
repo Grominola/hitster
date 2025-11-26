@@ -188,4 +188,13 @@ btn.onclick = () => {
 };
 </script>
 </body>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/hitster/sw.js')
+        .then(reg => console.log('Service Worker registrado', reg))
+        .catch(err => console.error('Service Worker fallo', err));
+    });
+}
+</script>
 </html>
