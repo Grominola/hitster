@@ -158,7 +158,10 @@ btn.onclick = () => {
 
     qrScanner.start(
         { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
+        { 
+    fps: 10, 
+    qrbox: { width: 230, height: 230 } 
+},
 
         // CUANDO LEE EL QR
         qrCodeMessage => {
