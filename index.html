@@ -1,42 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head><link rel="manifest" href="manifest.json">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hitster Valira</title>
-  <link rel="manifest" href="/hitster/manifest.json">
-  <meta name="theme-color" content="#1db954">
-  <h1>Bienvenido a Hitster</h1>
-  <button id="installBtn" style="display:none;">Instalar App</button>
-    <meta name="theme-color" content="#1db954">
- <script>
-    // Registrar Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/hitster/sw.js')
-        .then(() => console.log('SW registrado'))
-        .catch(err => console.log('Error SW', err));
-    }
-
-    // Botón de instalación
-    let deferredPrompt;
-    const installBtn = document.getElementById('installBtn');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'block';
-    });
-
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log(`User response: ${outcome}`);
-      deferredPrompt = null;
-      installBtn.style.display = 'none';
-    });
-   <script>
-    <style>
+<meta name="theme-color" content="#1db954">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hitster Valira</title>
+<style>
 body {
     margin: 0;
     padding: 0;
@@ -98,6 +67,9 @@ button:hover {
     <button id="btnScan">Escanear QR</button>
 </div>
 
+<!-- Botón de instalación PWA -->
+<button id="installBtn" style="display:none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 15px 30px; font-size: 1.2rem; background-color: #1db954; color: white; border: none; border-radius: 40px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 10000;">Instalar App</button>
+
 <!-- Partículas -->
 <script>
 const canvas = document.getElementById("particles");
@@ -132,6 +104,7 @@ function animate() {
 }
 animate();
 </script>
+<button id="installBtn" style="display:none;">Instalar App</button>
 
 <!-- Lector QR -->
 <script src="https://unpkg.com/html5-qrcode"></script>
@@ -217,7 +190,29 @@ btn.onclick = () => {
         qrScanner.stop().then(() => qrBox.remove()).catch(() => qrBox.remove());
     };
 };
+ 
+<script>
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); // evita que Chrome muestre el prompt automáticamente
+    deferredPrompt = e;
+    installBtn.style.display = 'block';
+});
+
+installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt(); // muestra el prompt de instalación
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response: ${outcome}`);
+    deferredPrompt = null;
+    installBtn.style.display = 'none';
+});
 </script>
+
+});
+};
 </body>
 <script>
 if ('serviceWorker' in navigator) {
@@ -228,48 +223,4 @@ if ('serviceWorker' in navigator) {
     });
 }
 </script>
-</html>
-
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hitster Valira</title>
-  <link rel="manifest" href="/hitster/manifest.json">
-  <meta name="theme-color" content="#1db954">
-</head>
-<body>
-  <h1>Bienvenido a Hitster</h1>
-  <button id="installBtn" style="display:none;">Instalar App</button>
-
-  <script>
-    // Registrar Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/hitster/sw.js')
-        .then(() => console.log('SW registrado'))
-        .catch(err => console.log('Error SW', err));
-    }
-
-    // Botón de instalación
-    let deferredPrompt;
-    const installBtn = document.getElementById('installBtn');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'block';
-    });
-
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log(`User response: ${outcome}`);
-      deferredPrompt = null;
-      installBtn.style.display = 'none';
-    });
-  </script>
-</body>
 </html>
