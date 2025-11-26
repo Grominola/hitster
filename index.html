@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1db954">
+<head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Hitster Valira</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1db954">
+
 <style>
 body {
     margin: 0;
@@ -58,6 +61,7 @@ button:hover {
 }
 </style>
 </head>
+
 <body>
 
 <canvas id="particles"></canvas>
@@ -66,6 +70,14 @@ button:hover {
     <h1>HITSTER VALIRA</h1>
     <button id="btnScan">Escanear QR</button>
 </div>
+
+<!-- Botón de Instalar PWA -->
+<button id="installBtn" style="display:none; position:fixed;
+bottom:20px; right:20px; padding:12px 20px; font-size:1rem;
+background:#1db954; color:white; border:none; border-radius:10px;
+z-index:9999; cursor:pointer;">
+    Instalar App
+</button>
 
 <!-- Partículas -->
 <script>
@@ -102,13 +114,14 @@ function animate() {
 animate();
 </script>
 
-<!-- Lector QR -->
+<!-- Librería QR -->
 <script src="https://unpkg.com/html5-qrcode"></script>
+
+<!-- Script del escáner QR -->
 <script>
 const btn = document.getElementById("btnScan");
 
 btn.onclick = () => {
-    // Contenedor completo
     const qrBox = document.createElement("div");
     qrBox.style.position = "fixed";
     qrBox.style.top = "0";
@@ -121,7 +134,6 @@ btn.onclick = () => {
     qrBox.style.alignItems = "center";
     qrBox.style.zIndex = "9999";
 
-    // Lector responsivo
     const readerDiv = document.createElement("div");
     readerDiv.id = "reader";
     readerDiv.style.width = "90vw";
@@ -131,7 +143,6 @@ btn.onclick = () => {
     readerDiv.style.position = "relative";
     qrBox.appendChild(readerDiv);
 
-    // Botón cerrar siempre visible
     const closeBtn = document.createElement("button");
     closeBtn.textContent = "Cerrar";
     closeBtn.style.position = "absolute";
@@ -154,39 +165,25 @@ btn.onclick = () => {
 
     function handleQrMessage(qrCodeMessage) {
         qrScanner.stop().then(() => {
-            // Interpretar si es link completo o solo un ID
-if (qrCodeMessage.startsWith("http")) {
-    window.open(qrCodeMessage, '_blank');
-} else {
-    // Intentar abrir Spotify nativo
-    const spotifyUrl = "spotify://track/" + qrCodeMessage;
-    const fallbackUrl = "https://open.spotify.com/track/" + qrCodeMessage;
+            if (qrCodeMessage.startsWith("http")) {
+                window.location.href = qrCodeMessage;
+            } else {
+                window.location.href = "spotify://track/" + qrCodeMessage;
 
-    // Intentar abrir deep link con setTimeout para fallback
-    const a = document.createElement('a');
-    a.href = spotifyUrl;
-    a.target = "_blank";
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-        window.open(fallbackUrl, '_blank');
-    }, 500);
-}
-
+                setTimeout(() => {
+                    window.location.href = "https://open.spotify.com/track/" + qrCodeMessage;
+                }, 800);
             }
-            // No mostrar la ID, cerrar el lector
             qrBox.remove();
         });
     }
 
-    qrScanner.start({ facingMode: { exact: "environment" } }, config, handleQrMessage, errorMessage => {})
-    .catch(err => {
-        // fallback a cámara frontal
-        qrScanner.start({ facingMode: "user" }, config, handleQrMessage, errorMessage => {})
-        .catch(err2 => {
+    qrScanner.start({ facingMode: { exact: "environment" } }, config, handleQrMessage, () => {})
+    .catch(() => {
+        qrScanner.start({ facingMode: "user" }, config, handleQrMessage, () => {})
+        .catch(() => {
             alert("No se pudo acceder a la cámara. Revisa permisos o usa HTTPS/localhost.");
             qrBox.remove();
-            console.error(err2);
         });
     });
 
@@ -195,7 +192,8 @@ if (qrCodeMessage.startsWith("http")) {
     };
 };
 </script>
-</body>
+
+<!-- Registro del Service Worker -->
 <script>
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -205,4 +203,26 @@ if ('serviceWorker' in navigator) {
     });
 }
 </script>
+
+<!-- Botón instalar PWA -->
+<script>
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('installBtn').style.display = 'block';
+});
+
+document.getElementById('installBtn').addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('installBtn').style.display = 'none';
+});
+</script>
+
+</body>
 </html>
+
